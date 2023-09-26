@@ -7,6 +7,13 @@
 
 import UIKit
 
+public struct RefreshText {
+    public static var loading: String = "Loading..."
+    public static var headIdle: String = "Pull down to refresh"
+    public static var footIdle: String = "pull up to load more"
+    public static var release: String = "Release to refresh"
+}
+
 open class IndicatorView: RefreshComponent {
 
     public lazy var arrowLayer: CAShapeLayer = {
@@ -79,13 +86,6 @@ open class IndicatorView: RefreshComponent {
 }
 
 open class TextIndicatorView: IndicatorView {
-
-    public struct RefreshText {
-        public static var loading: String = "Loading..."
-        public static var headIdle: String = "Pull down to refresh"
-        public static var footIdle: String = "pull up to load more"
-        public static var release: String = "Release to refresh"
-    }
 
     public lazy var label: UILabel = {
         let label = UILabel()
@@ -204,7 +204,7 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        label.text = isRefreshing ? TextIndicatorView.RefreshText.loading : ""
+        label.text = isRefreshing ? RefreshText.loading : ""
         label.sizeToFit()
     }
 
