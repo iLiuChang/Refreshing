@@ -9,11 +9,12 @@ import UIKit
 open class RefreshComponent: UIView {
 
     public enum Kind {
-        case header, footer, autoFooter
+        case header
+        case footer(Bool)
     }
 
     private let kind: Kind
-    private let contentHeight: CGFloat
+    private let threshold: CGFloat
     private let actionHandler: () -> Void
     private var scrollView: UIScrollView? { superview as? UIScrollView }
     private var offsetToken: NSKeyValueObservation?
@@ -27,13 +28,13 @@ open class RefreshComponent: UIView {
         didSet { scrollProgressDidChange(progress) }
     }
 
-    public init(kind: Kind, height: CGFloat, actionHandler: @escaping () -> Void) {
+    public init(kind: Kind, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         self.kind = kind
-        self.contentHeight = height
+        self.threshold = threshold
         self.actionHandler = actionHandler
         super.init(frame: .zero)
 
-        self.autoresizingMask = [ .flexibleWidth ]
+        self.autoresizingMask = .flexibleWidth
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -73,11 +74,12 @@ open class RefreshComponent: UIView {
             guard scrollView.panGestureRecognizer.state == .ended else { return }
             self?.scrollViewDidEndDragging(scrollView)
         }
-        if kind == .header {
-            frame = CGRect(x: 0, y: -contentHeight, width: scrollView.bounds.width, height: contentHeight)
-        } else {
+        switch kind {
+        case .header:
+            frame = CGRect(x: 0, y: -threshold, width: scrollView.bounds.width, height: threshold)
+        default:
             sizeToken = scrollView.observe(\.contentSize) { [weak self] scrollView, _ in
-                self?.frame = CGRect(x: 0, y: scrollView.contentSize.height, width: scrollView.bounds.width, height: self?.contentHeight ?? 0)
+                self?.frame = CGRect(x: 0, y: scrollView.contentSize.height, width: scrollView.bounds.width, height: self?.threshold ?? 0)
                 self?.isHidden = scrollView.contentSize.height <= scrollView.bounds.height
             }
         }
@@ -94,20 +96,28 @@ open class RefreshComponent: UIView {
 
         switch kind {
         case .header:
-            progress = Float(min(1, max(0, -(scrollView.contentOffset.y + scrollView.contentInsetTop) / contentHeight)))
-        case .footer:
+            progress = Float(min(1, max(0, -(scrollView.contentOffset.y + scrollView.contentInsetTop) / threshold)))
+        case .footer(let auto):
             if scrollView.contentSize.height <= scrollView.bounds.height { break }
-            progress = Float(min(1, max(0, (scrollView.contentOffset.y + scrollView.bounds.height - scrollView.contentSize.height - scrollView.contentInsetBottom) / contentHeight)))
-        case .autoFooter:
-            if scrollView.contentSize.height <= scrollView.bounds.height { break }
-            if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInsetBottom {
-                beginRefreshing()
+            if auto {
+                if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInsetBottom {
+                    beginRefreshing()
+                }
+            } else {
+                progress = Float(min(1, max(0, (scrollView.contentOffset.y + scrollView.bounds.height - scrollView.contentSize.height - scrollView.contentInsetBottom) / threshold)))
             }
         }
     }
 
     private func scrollViewDidEndDragging(_ scrollView: UIScrollView) {
-        if isRefreshing || progress < 1 || kind == .autoFooter { return }
+        var isAuto = false
+        switch kind {
+        case .footer(let auto):
+            isAuto = auto
+        default:
+            isAuto = false
+        }
+        if isRefreshing || progress < 1 || isAuto { return }
         beginRefreshing()
     }
 
@@ -120,13 +130,13 @@ open class RefreshComponent: UIView {
             UIView.animate(withDuration: 0.3, animations: {
                 switch self.kind {
                 case .header:
-                    scrollView.contentOffset.y = -self.contentHeight - scrollView.contentInsetTop
-                    scrollView.contentInset.top += self.contentHeight
-                case .footer:
-                    scrollView.contentInset.bottom += self.contentHeight
-                case .autoFooter:
-                    scrollView.contentOffset.y = self.contentHeight + scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInsetBottom
-                    scrollView.contentInset.bottom += self.contentHeight
+                    scrollView.contentOffset.y = -self.threshold - scrollView.contentInsetTop
+                    scrollView.contentInset.top += self.threshold
+                case .footer(let auto):
+                    if auto {
+                        scrollView.contentOffset.y = self.threshold + scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInsetBottom
+                    }
+                    scrollView.contentInset.bottom += self.threshold
                 }
             }, completion: { _ in
                 self.actionHandler()

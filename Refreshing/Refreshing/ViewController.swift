@@ -24,7 +24,7 @@ class ViewController: UIViewController, UITableViewDataSource {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
 
-        tableView.rfg.addRefreshHeader(type: .textIndicator(.white), height: 60) {
+        tableView.rfg.addRefreshHeader(type: .textIndicator(.white), threshold: 60) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2, execute: {
                 self.count = 10
                 tableView.reloadData()
@@ -33,7 +33,7 @@ class ViewController: UIViewController, UITableViewDataSource {
 
         }
 
-        tableView.rfg.addRefreshFooter(type: .textIndicator(.white), auto: false, height: 60) {
+        tableView.rfg.addRefreshFooter(type: .textIndicator(.white), auto: false, threshold: 60) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2, execute: {
                 self.count += 10
                 tableView.reloadData()

@@ -50,10 +50,10 @@ open class IndicatorView: RefreshComponent {
     public let style: RefreshStyle
     public let isHeader: Bool
 
-    public init(isHeader: Bool, style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
+    public init(isHeader: Bool, style:RefreshStyle, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         self.isHeader = isHeader
         self.style = style
-        super.init(kind: isHeader ? .header : .footer, height: height, actionHandler: actionHandler)
+        super.init(kind: isHeader ? .header : .footer(false), threshold: threshold, actionHandler: actionHandler)
         layer.addSublayer(arrowLayer)
         addSubview(indicator)
     }
@@ -98,8 +98,8 @@ open class TextIndicatorView: IndicatorView {
         return label
     }()
 
-    public override init(isHeader: Bool, style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
-        super.init(isHeader: isHeader, style:style, height: height, actionHandler: actionHandler)
+    public override init(isHeader: Bool, style:RefreshStyle, threshold: CGFloat, actionHandler: @escaping () -> Void) {
+        super.init(isHeader: isHeader, style:style, threshold: threshold, actionHandler: actionHandler)
         addSubview(label)
     }
     
@@ -149,9 +149,9 @@ open class IndicatorAutoFooter: RefreshComponent {
 
     public let style: RefreshStyle
 
-    public init(style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
+    public init(style:RefreshStyle, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         self.style = style
-        super.init(kind: .autoFooter, height: height, actionHandler: actionHandler)
+        super.init(kind: .footer(true), threshold: threshold, actionHandler: actionHandler)
         addSubview(indicator)
     }
 
@@ -186,8 +186,8 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
         return label
     }()
 
-    public override init(style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
-        super.init(style: style, height: height, actionHandler: actionHandler)
+    public override init(style:RefreshStyle, threshold: CGFloat, actionHandler: @escaping () -> Void) {
+        super.init(style: style, threshold: threshold, actionHandler: actionHandler)
         addSubview(label)
     }
 

@@ -35,36 +35,31 @@ public struct UIScrollViewRefreshWrapper {
         self.base = base
     }
 
-    public var isExistRefreshHeader: Bool {
-        _header != nil
-    }
-    
-    public var isExistRefreshFooter: Bool {
-        _footer != nil
-    }
+    public var isExistRefreshHeader: Bool { _header != nil }
+    public var isExistRefreshFooter: Bool { _footer != nil }
 
-    public mutating func addRefreshHeader(type: RefreshType = .indicator(.black), height: CGFloat = 60, actionHandler: @escaping (()->())) {
+    public mutating func addRefreshHeader(type: RefreshType = .indicator(.black), threshold: CGFloat = 60, actionHandler: @escaping (()->())) {
         switch type {
         case .indicator(let style):
-            _header = IndicatorView(isHeader: true, style: style, height: height, actionHandler: actionHandler)
+            _header = IndicatorView(isHeader: true, style: style, threshold: threshold, actionHandler: actionHandler)
         case .textIndicator(let style):
-            _header = TextIndicatorView(isHeader: true, style: style, height: height, actionHandler: actionHandler)
+            _header = TextIndicatorView(isHeader: true, style: style, threshold: threshold, actionHandler: actionHandler)
         }
     }
     
-    public mutating func addRefreshFooter(type: RefreshType = .indicator(.black), auto: Bool = false, height: CGFloat = 60, actionHandler: @escaping (()->())) {
+    public mutating func addRefreshFooter(type: RefreshType = .indicator(.black), auto: Bool = false, threshold: CGFloat = 60, actionHandler: @escaping (()->())) {
         switch type {
         case .indicator(let style):
             if auto {
-                _footer = IndicatorAutoFooter(style: style, height: height, actionHandler: actionHandler)
+                _footer = IndicatorAutoFooter(style: style, threshold: threshold, actionHandler: actionHandler)
             } else {
-                _footer = IndicatorView(isHeader: false, style: style, height: height, actionHandler: actionHandler)
+                _footer = IndicatorView(isHeader: false, style: style, threshold: threshold, actionHandler: actionHandler)
             }
         case .textIndicator(let style):
             if auto {
-                _footer = TextIndicatorAutoFooter(style: style, height: height, actionHandler: actionHandler)
+                _footer = TextIndicatorAutoFooter(style: style, threshold: threshold, actionHandler: actionHandler)
             } else {
-                _footer = TextIndicatorView(isHeader: false, style: style, height: height, actionHandler: actionHandler)
+                _footer = TextIndicatorView(isHeader: false, style: style, threshold: threshold, actionHandler: actionHandler)
             }
         }
     }
