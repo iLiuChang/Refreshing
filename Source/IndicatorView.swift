@@ -50,10 +50,10 @@ open class IndicatorView: RefreshComponent {
     public let style: RefreshStyle
     public let isHeader: Bool
 
-    init(isHeader: Bool, style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
+    public init(isHeader: Bool, style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
         self.isHeader = isHeader
         self.style = style
-        super.init(style: isHeader ? .header : .footer, height: height, actionHandler: actionHandler)
+        super.init(kind: isHeader ? .header : .footer, height: height, actionHandler: actionHandler)
         layer.addSublayer(arrowLayer)
         addSubview(indicator)
     }
@@ -98,7 +98,7 @@ open class TextIndicatorView: IndicatorView {
         return label
     }()
 
-    override init(isHeader: Bool, style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
+    public override init(isHeader: Bool, style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
         super.init(isHeader: isHeader, style:style, height: height, actionHandler: actionHandler)
         addSubview(label)
     }
@@ -149,9 +149,9 @@ open class IndicatorAutoFooter: RefreshComponent {
 
     public let style: RefreshStyle
 
-    init(style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
+    public init(style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
         self.style = style
-        super.init(style: .autoFooter, height: height, actionHandler: actionHandler)
+        super.init(kind: .autoFooter, height: height, actionHandler: actionHandler)
         addSubview(indicator)
     }
 
@@ -186,7 +186,7 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
         return label
     }()
 
-    override init(style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
+    public override init(style:RefreshStyle, height: CGFloat, actionHandler: @escaping () -> Void) {
         super.init(style: style, height: height, actionHandler: actionHandler)
         addSubview(label)
     }

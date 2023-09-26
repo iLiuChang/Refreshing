@@ -8,11 +8,11 @@
 import UIKit
 open class RefreshComponent: UIView {
 
-    public enum Style {
+    public enum Kind {
         case header, footer, autoFooter
     }
 
-    private let style: Style
+    private let kind: Kind
     private let contentHeight: CGFloat
     private let actionHandler: () -> Void
     private var scrollView: UIScrollView? { superview as? UIScrollView }
@@ -27,8 +27,8 @@ open class RefreshComponent: UIView {
         didSet { scrollProgressDidChange(progress) }
     }
 
-    public init(style: Style, height: CGFloat, actionHandler: @escaping () -> Void) {
-        self.style = style
+    public init(kind: Kind, height: CGFloat, actionHandler: @escaping () -> Void) {
+        self.kind = kind
         self.contentHeight = height
         self.actionHandler = actionHandler
         super.init(frame: .zero)
@@ -73,7 +73,7 @@ open class RefreshComponent: UIView {
             guard scrollView.panGestureRecognizer.state == .ended else { return }
             self?.scrollViewDidEndDragging(scrollView)
         }
-        if style == .header {
+        if kind == .header {
             frame = CGRect(x: 0, y: -contentHeight, width: scrollView.bounds.width, height: contentHeight)
         } else {
             sizeToken = scrollView.observe(\.contentSize) { [weak self] scrollView, _ in
@@ -92,7 +92,7 @@ open class RefreshComponent: UIView {
     private func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if isRefreshing { return }
 
-        switch style {
+        switch kind {
         case .header:
             progress = Float(min(1, max(0, -(scrollView.contentOffset.y + scrollView.contentInsetTop) / contentHeight)))
         case .footer:
@@ -107,7 +107,7 @@ open class RefreshComponent: UIView {
     }
 
     private func scrollViewDidEndDragging(_ scrollView: UIScrollView) {
-        if isRefreshing || progress < 1 || style == .autoFooter { return }
+        if isRefreshing || progress < 1 || kind == .autoFooter { return }
         beginRefreshing()
     }
 
@@ -118,7 +118,7 @@ open class RefreshComponent: UIView {
         isRefreshing = true
         DispatchQueue.main.async {
             UIView.animate(withDuration: 0.3, animations: {
-                switch self.style {
+                switch self.kind {
                 case .header:
                     scrollView.contentOffset.y = -self.contentHeight - scrollView.contentInsetTop
                     scrollView.contentInset.top += self.contentHeight
