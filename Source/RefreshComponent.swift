@@ -13,8 +13,8 @@ open class RefreshComponent: UIView {
         case footer(Bool)
     }
 
-    private let kind: Kind
-    private let threshold: CGFloat
+    public let kind: Kind
+    public let threshold: CGFloat
     private let actionHandler: () -> Void
     private var scrollView: UIScrollView? { superview as? UIScrollView }
     private var offsetToken: NSKeyValueObservation?

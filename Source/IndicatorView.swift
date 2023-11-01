@@ -87,7 +87,7 @@ open class IndicatorView: RefreshComponent {
 
 open class TextIndicatorView: IndicatorView {
 
-    public lazy var label: UILabel = {
+    public lazy var textLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         if self.style == .white {
@@ -100,7 +100,7 @@ open class TextIndicatorView: IndicatorView {
 
     public override init(isHeader: Bool, style:RefreshStyle, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         super.init(isHeader: isHeader, style:style, threshold: threshold, actionHandler: actionHandler)
-        addSubview(label)
+        addSubview(textLabel)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -110,21 +110,21 @@ open class TextIndicatorView: IndicatorView {
     open override func layoutSubviews() {
         super.layoutSubviews()
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
-        arrowLayer.position = center.move(x: -label.bounds.midX - 4)
-        indicator.center = center.move(x: -label.bounds.midX - 4)
-        label.center = center.move(x: indicator.bounds.midX + 4)
+        arrowLayer.position = center.move(x: -textLabel.bounds.midX - 4)
+        indicator.center = center.move(x: -textLabel.bounds.midX - 4)
+        textLabel.center = center.move(x: indicator.bounds.midX + 4)
     }
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        label.text = isRefreshing ? RefreshText.loading : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
-        label.sizeToFit()
+        textLabel.text = isRefreshing ? RefreshText.loading : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
+        textLabel.sizeToFit()
     }
 
     open override func scrollProgressDidChange(_ progress: Float) {
         super.scrollProgressDidChange(progress)
-        label.text = progress == 1 ? RefreshText.release : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
-        label.sizeToFit()
+        textLabel.text = progress == 1 ? RefreshText.release : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
+        textLabel.sizeToFit()
     }
 
 }
@@ -175,7 +175,7 @@ open class IndicatorAutoFooter: RefreshComponent {
 
 open class TextIndicatorAutoFooter: IndicatorAutoFooter {
 
-    public lazy var label: UILabel = {
+    public lazy var textLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         if self.style == .white {
@@ -188,7 +188,7 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
 
     public override init(style:RefreshStyle, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         super.init(style: style, threshold: threshold, actionHandler: actionHandler)
-        addSubview(label)
+        addSubview(textLabel)
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -198,14 +198,14 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
     open override func layoutSubviews() {
         super.layoutSubviews()
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
-        indicator.center = center.move(x: -label.bounds.midX - 4)
-        label.center = center.move(x: indicator.bounds.midX + 4)
+        indicator.center = center.move(x: -textLabel.bounds.midX - 4)
+        textLabel.center = center.move(x: indicator.bounds.midX + 4)
     }
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        label.text = isRefreshing ? RefreshText.loading : ""
-        label.sizeToFit()
+        textLabel.text = isRefreshing ? RefreshText.loading : ""
+        textLabel.sizeToFit()
     }
 
 }

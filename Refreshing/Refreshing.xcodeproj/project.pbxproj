@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		282210D52AF2296100A9DFE9 /* AnimationImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282210D42AF2296100A9DFE9 /* AnimationImageView.swift */; };
 		2863F55A2AC2802100670CD4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2863F5592AC2802100670CD4 /* AppDelegate.swift */; };
 		2863F55C2AC2802100670CD4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2863F55B2AC2802100670CD4 /* SceneDelegate.swift */; };
 		2863F55E2AC2802100670CD4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2863F55D2AC2802100670CD4 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		282210D42AF2296100A9DFE9 /* AnimationImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationImageView.swift; sourceTree = "<group>"; };
 		2863F5562AC2802100670CD4 /* Refreshing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Refreshing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2863F5592AC2802100670CD4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2863F55B2AC2802100670CD4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				2863F56E2AC2803600670CD4 /* IndicatorView.swift */,
 				2863F56F2AC2803600670CD4 /* UIScrollView+Refresh.swift */,
 				2863F5702AC2803600670CD4 /* RefreshComponent.swift */,
+				282210D42AF2296100A9DFE9 /* AnimationImageView.swift */,
 			);
 			name = Source;
 			path = ../../Source;
@@ -156,6 +159,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				282210D52AF2296100A9DFE9 /* AnimationImageView.swift in Sources */,
 				2863F55E2AC2802100670CD4 /* ViewController.swift in Sources */,
 				2863F5722AC2803600670CD4 /* UIScrollView+Refresh.swift in Sources */,
 				2863F55A2AC2802100670CD4 /* AppDelegate.swift in Sources */,

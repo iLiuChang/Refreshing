@@ -21,6 +21,8 @@ extension UIScrollView {
 public enum RefreshType {
     case indicator(RefreshStyle)
     case textIndicator(RefreshStyle)
+    case animation(AnimationViewWrapper)
+    case textAnimation(AnimationViewWrapper, RefreshStyle)
 }
 
 public enum RefreshStyle {
@@ -44,6 +46,10 @@ public struct UIScrollViewRefreshWrapper {
             _header = IndicatorView(isHeader: true, style: style, threshold: threshold, actionHandler: actionHandler)
         case .textIndicator(let style):
             _header = TextIndicatorView(isHeader: true, style: style, threshold: threshold, actionHandler: actionHandler)
+        case .animation(let view):
+            _header = AnimationImageView(animationView: view, kind: .header, threshold: threshold, actionHandler: actionHandler)
+        case .textAnimation(let view, let style):
+            _header = AnimationTextImageView(animationView: view, style: style, kind: .header, threshold: threshold, actionHandler: actionHandler)
         }
     }
     
@@ -61,6 +67,10 @@ public struct UIScrollViewRefreshWrapper {
             } else {
                 _footer = TextIndicatorView(isHeader: false, style: style, threshold: threshold, actionHandler: actionHandler)
             }
+        case .animation(let view):
+            _footer = AnimationImageView(animationView:view, kind: .footer(auto), threshold: threshold, actionHandler: actionHandler)
+        case .textAnimation(let view, let style):
+            _footer = AnimationTextImageView(animationView:view, style: style, kind: .footer(auto), threshold: threshold, actionHandler: actionHandler)
         }
     }
     
