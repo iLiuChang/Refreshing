@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Refreshing"
-  s.version      = "1.1.0"
+  s.version      = "1.2.0"
   s.summary      = "An easy way to implement pull-to-refresh feature based on UIScrollView extension."
   s.homepage     = "https://github.com/iLiuChang/Refreshing"
   s.license      = "MIT"
