@@ -15,6 +15,13 @@ open class RefreshComponent: UIView {
 
     public let kind: Kind
     public let threshold: CGFloat
+    public var isHideRefresher: Bool? {
+        didSet {
+            if let hide = isHideRefresher {
+                self.isHidden = hide
+            }
+        }
+    }
     private let actionHandler: () -> Void
     private var scrollView: UIScrollView? { superview as? UIScrollView }
     private var offsetToken: NSKeyValueObservation?
@@ -80,7 +87,9 @@ open class RefreshComponent: UIView {
         default:
             sizeToken = scrollView.observe(\.contentSize) { [weak self] scrollView, _ in
                 self?.frame = CGRect(x: 0, y: scrollView.contentSize.height, width: scrollView.bounds.width, height: self?.threshold ?? 0)
-                self?.isHidden = scrollView.contentSize.height <= scrollView.bounds.height
+                if self?.isHideRefresher == nil {
+                    self?.isHidden = scrollView.contentSize.height <= scrollView.bounds.height
+                }
             }
         }
     }
@@ -92,7 +101,7 @@ open class RefreshComponent: UIView {
     }
 
     private func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if isRefreshing { return }
+        if isRefreshing || isHidden { return }
 
         switch kind {
         case .header:
@@ -110,6 +119,8 @@ open class RefreshComponent: UIView {
     }
 
     private func scrollViewDidEndDragging(_ scrollView: UIScrollView) {
+        if isHidden { return }
+
         var isAuto = false
         switch kind {
         case .footer(let auto):

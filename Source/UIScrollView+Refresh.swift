@@ -40,6 +40,18 @@ public struct UIScrollViewRefreshWrapper {
     public var isExistRefreshHeader: Bool { _header != nil }
     public var isExistRefreshFooter: Bool { _footer != nil }
 
+    public var isHideRefreshHeader: Bool? {
+        didSet {
+            _header?.isHideRefresher = isHideRefreshHeader
+        }
+    }
+
+    public var isHideRefreshFooter: Bool? {
+        didSet {
+            _footer?.isHideRefresher = isHideRefreshFooter
+        }
+    }
+
     public mutating func addRefreshHeader(type: RefreshType = .indicator(.black), threshold: CGFloat = 60, actionHandler: @escaping (()->())) {
         switch type {
         case .indicator(let style):
@@ -82,10 +94,6 @@ public struct UIScrollViewRefreshWrapper {
         _footer = nil
     }
 
-    public mutating func resetRefreshFooter() {
-        _footer = _tempFooter
-    }
-
     public func beginRefreshing() {
         _header?.beginRefreshing()
     }
@@ -125,10 +133,6 @@ public struct UIScrollViewRefreshWrapper {
         }
     }
 
-    private var _tempFooter: RefreshComponent? {
-        get { objc_getAssociatedObject(base, &TempRefreshFooterKey) as? RefreshComponent }
-        set { objc_setAssociatedObject(base, &TempRefreshFooterKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-    }
 }
 
 
