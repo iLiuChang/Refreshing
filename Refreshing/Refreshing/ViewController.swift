@@ -40,7 +40,8 @@ class ViewController: UIViewController, UITableViewDataSource {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        Configuration.animationImageLayout.edgeInset = .init(top: 10, left: 0, bottom: 10, right: 0)
+        Configuration.animationTextImageLayout.edgeInset = .init(top: 10, left: 0, bottom: 0, right: 10)
         view.backgroundColor = .gray
         let tableView = UITableView()
         tableView.frame = view.bounds
@@ -51,7 +52,7 @@ class ViewController: UIViewController, UITableViewDataSource {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
 
-        tableView.rfg.addRefreshHeader(type: .textAnimation(GIF(), .white), threshold: 80) {
+        tableView.rfg.addRefreshHeader(type: .animation(GIF()), threshold: 80) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2, execute: {
                 self.count = 10
                 tableView.reloadData()

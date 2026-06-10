@@ -7,13 +7,6 @@
 
 import UIKit
 
-public struct RefreshText {
-    public static var loading: String = "Loading..."
-    public static var headIdle: String = "Pull down to refresh"
-    public static var footIdle: String = "pull up to load more"
-    public static var release: String = "Release to refresh"
-}
-
 open class IndicatorView: RefreshComponent {
 
     public lazy var arrowLayer: CAShapeLayer = {
@@ -89,7 +82,7 @@ open class TextIndicatorView: IndicatorView {
 
     public lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = Configuration.font
         if self.style == .white {
             label.textColor = UIColor.white.withAlphaComponent(0.8)
         } else {
@@ -117,13 +110,13 @@ open class TextIndicatorView: IndicatorView {
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        textLabel.text = isRefreshing ? RefreshText.loading : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
+        textLabel.text = isRefreshing ? Configuration.text.loading : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
         textLabel.sizeToFit()
     }
 
     open override func scrollProgressDidChange(_ progress: Float) {
         super.scrollProgressDidChange(progress)
-        textLabel.text = progress == 1 ? RefreshText.release : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
+        textLabel.text = progress == 1 ? Configuration.text.release : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
         textLabel.sizeToFit()
     }
 
@@ -204,7 +197,7 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        textLabel.text = isRefreshing ? RefreshText.loading : ""
+        textLabel.text = isRefreshing ? Configuration.text.loading : ""
         textLabel.sizeToFit()
     }
 

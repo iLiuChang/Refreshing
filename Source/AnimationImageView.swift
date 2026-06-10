@@ -19,8 +19,6 @@ public enum RefreshStatus {
 
 open class AnimationImageView: RefreshComponent {
 
-    public static var padding: CGFloat = 10
-
     public let animationView: AnimationViewWrapper
 
     public init(animationView: AnimationViewWrapper, kind: RefreshComponent.Kind, threshold: CGFloat, actionHandler: @escaping () -> Void) {
@@ -36,11 +34,12 @@ open class AnimationImageView: RefreshComponent {
     }
 
     open func setupConstraints() {
+        let inset = Configuration.animationImageLayout.edgeInset
         NSLayoutConstraint.activate([
-            animationView.rightAnchor.constraint(equalTo: rightAnchor, constant: -AnimationImageView.padding),
-            animationView.leftAnchor.constraint(equalTo: leftAnchor, constant: AnimationImageView.padding),
-            animationView.topAnchor.constraint(equalTo: topAnchor, constant: AnimationImageView.padding),
-            animationView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -AnimationImageView.padding)
+            animationView.rightAnchor.constraint(equalTo: rightAnchor, constant: -inset.right),
+            animationView.leftAnchor.constraint(equalTo: leftAnchor, constant: inset.left),
+            animationView.topAnchor.constraint(equalTo: topAnchor, constant: inset.top),
+            animationView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset.bottom)
         ])
     }
     
@@ -58,16 +57,10 @@ open class AnimationImageView: RefreshComponent {
 }
 
 open class AnimationTextImageView: AnimationImageView {
-
-    public static var layout = Layout()
-    public struct Layout {
-        let padding: CGFloat = 10
-        let spacing: CGFloat = 10
-    }
     
     public lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = Configuration.font
         if self.style == .white {
             label.textColor = UIColor.white.withAlphaComponent(0.8)
         } else {
@@ -100,17 +93,19 @@ open class AnimationTextImageView: AnimationImageView {
     }
 
     open override func setupConstraints() {
+        
+        let inset = Configuration.animationTextImageLayout.edgeInset
         NSLayoutConstraint.activate([
-            textLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -AnimationTextImageView.layout.padding),
-            textLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: AnimationTextImageView.layout.padding),
-            textLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -AnimationTextImageView.layout.padding)
+            textLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -inset.right),
+            textLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: inset.left),
+            textLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset.bottom)
         ])
         
         NSLayoutConstraint.activate([
-            animationView.rightAnchor.constraint(equalTo: rightAnchor, constant: -AnimationTextImageView.layout.padding),
-            animationView.leftAnchor.constraint(equalTo: leftAnchor, constant: AnimationTextImageView.layout.padding),
-            animationView.topAnchor.constraint(equalTo: topAnchor, constant: AnimationTextImageView.layout.padding),
-            animationView.bottomAnchor.constraint(equalTo: textLabel.topAnchor, constant: -AnimationTextImageView.layout.spacing)
+            animationView.rightAnchor.constraint(equalTo: rightAnchor, constant: -inset.right),
+            animationView.leftAnchor.constraint(equalTo: leftAnchor, constant: inset.left),
+            animationView.topAnchor.constraint(equalTo: topAnchor, constant: inset.top),
+            animationView.bottomAnchor.constraint(equalTo: textLabel.topAnchor, constant: -Configuration.animationTextImageLayout.spacing)
         ])
 
         textLabel.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
@@ -120,12 +115,12 @@ open class AnimationTextImageView: AnimationImageView {
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        textLabel.text = isRefreshing ? RefreshText.loading : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
+        textLabel.text = isRefreshing ? Configuration.text.loading : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
     }
 
     open override func scrollProgressDidChange(_ progress: Float) {
         super.scrollProgressDidChange(progress)
-        textLabel.text = progress == 1 ? RefreshText.release : (isHeader ? RefreshText.headIdle : RefreshText.footIdle)
+        textLabel.text = progress == 1 ? Configuration.text.release : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
     }
 
 }
