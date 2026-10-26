@@ -17,7 +17,7 @@
 		2863F5712AC2803600670CD4 /* IndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2863F56E2AC2803600670CD4 /* IndicatorView.swift */; };
 		2863F5722AC2803600670CD4 /* UIScrollView+Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2863F56F2AC2803600670CD4 /* UIScrollView+Refresh.swift */; };
 		2863F5732AC2803600670CD4 /* RefreshComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2863F5702AC2803600670CD4 /* RefreshComponent.swift */; };
-		28C44E892E795B970007BCFC /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C44E882E795B970007BCFC /* Configuration.swift */; };
+		28C44E892E795B970007BCFC /* RefreshConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C44E882E795B970007BCFC /* RefreshConfiguration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +33,7 @@
 		2863F56E2AC2803600670CD4 /* IndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndicatorView.swift; sourceTree = "<group>"; };
 		2863F56F2AC2803600670CD4 /* UIScrollView+Refresh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Refresh.swift"; sourceTree = "<group>"; };
 		2863F5702AC2803600670CD4 /* RefreshComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshComponent.swift; sourceTree = "<group>"; };
-		28C44E882E795B970007BCFC /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		28C44E882E795B970007BCFC /* RefreshConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshConfiguration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +85,7 @@
 				2863F56F2AC2803600670CD4 /* UIScrollView+Refresh.swift */,
 				2863F5702AC2803600670CD4 /* RefreshComponent.swift */,
 				282210D42AF2296100A9DFE9 /* AnimationImageView.swift */,
-				28C44E882E795B970007BCFC /* Configuration.swift */,
+				28C44E882E795B970007BCFC /* RefreshConfiguration.swift */,
 			);
 			name = Sources;
 			path = ../../Sources;
@@ -168,7 +168,7 @@
 				2863F55A2AC2802100670CD4 /* AppDelegate.swift in Sources */,
 				2863F5732AC2803600670CD4 /* RefreshComponent.swift in Sources */,
 				2863F5712AC2803600670CD4 /* IndicatorView.swift in Sources */,
-				28C44E892E795B970007BCFC /* Configuration.swift in Sources */,
+				28C44E892E795B970007BCFC /* RefreshConfiguration.swift in Sources */,
 				2863F55C2AC2802100670CD4 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

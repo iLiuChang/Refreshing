@@ -40,8 +40,6 @@ class ViewController: UIViewController, UITableViewDataSource {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        Configuration.animationImageLayout.edgeInset = .init(top: 10, left: 0, bottom: 10, right: 0)
-        Configuration.animationTextImageLayout.edgeInset = .init(top: 10, left: 0, bottom: 0, right: 10)
         view.backgroundColor = .gray
         let tableView = UITableView()
         tableView.frame = view.bounds
@@ -52,7 +50,9 @@ class ViewController: UIViewController, UITableViewDataSource {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
 
-        tableView.rfg.addRefreshHeader(type: .animation(GIF()), threshold: 80) {
+        var headerConfiguration = RefreshConfiguration.default
+        headerConfiguration.contentInset = .init(top: 10, left: 0, bottom: 10, right: 0)
+        tableView.rfg.addRefreshHeader(type: .animation(GIF()), threshold: 80, configuration: headerConfiguration) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2, execute: {
                 self.count = 10
                 tableView.reloadData()
@@ -61,7 +61,11 @@ class ViewController: UIViewController, UITableViewDataSource {
 
         }
 
-        tableView.rfg.addRefreshFooter(type: .textAnimation(GIF(), .white), auto: false, threshold: 80) {
+        var footerConfiguration = RefreshConfiguration.default
+        footerConfiguration.contentInset = .init(top: 10, left: 0, bottom: 0, right: 10)
+        footerConfiguration.spacing = 10
+        footerConfiguration.textColor = UIColor.white.withAlphaComponent(0.8)
+        tableView.rfg.addRefreshFooter(type: .textAnimation(GIF()), auto: false, threshold: 80, configuration: footerConfiguration) {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2, execute: {
                 self.count += 10
                 tableView.reloadData()

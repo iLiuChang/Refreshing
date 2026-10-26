@@ -6,15 +6,37 @@
 //
 
 import UIKit
+
+/// The base class of all refresh headers and footers.
+///
+/// It observes the scroll view it is added to, tracks the pull progress, adjusts the content inset
+/// while refreshing and calls the action handler. Subclasses only provide the appearance by
+/// overriding `refreshStateDidChange(_:)` and `scrollProgressDidChange(_:)`, which must be implemented.
+///
+/// Add a custom component with `UIScrollViewRefreshWrapper.addCustomRefreshHeader(_:)` or
+/// `UIScrollViewRefreshWrapper.addCustomRefreshFooter(_:)`.
 open class RefreshComponent: UIView {
 
+    /// The position and trigger mode of a refresh component.
     public enum Kind {
+        /// Placed above the content; triggered by pulling down past the threshold and releasing.
         case header
+        /// Placed below the content. When the associated value is `true`, the footer triggers
+        /// automatically once the content is scrolled to the bottom; otherwise it requires pulling up
+        /// past the threshold and releasing.
         case footer(Bool)
     }
 
+    /// The position and trigger mode of the component.
     public let kind: Kind
+    /// The height of the component, which is also the pull distance needed to trigger a refresh.
     public let threshold: CGFloat
+    /// The configuration captured when the component was created.
+    public let configuration: RefreshConfiguration
+    /// Forces the component to be hidden (`true`) or shown (`false`).
+    ///
+    /// When `nil` (the default), a footer hides itself while the content is shorter than the scroll view.
+    /// A hidden component never triggers a refresh.
     public var isHideRefresher: Bool? {
         didSet {
             if let hide = isHideRefresher {
@@ -22,6 +44,10 @@ open class RefreshComponent: UIView {
             }
         }
     }
+    /// Whether the component is in the "no more data" state, in which it never triggers a refresh.
+    ///
+    /// Set by `UIScrollViewRefreshWrapper.endRefreshingWithNoMoreData()` and cleared by
+    /// `UIScrollViewRefreshWrapper.resetNoMoreData()`.
     public private(set) var isNoMoreData = false {
         didSet {
             guard isNoMoreData != oldValue else { return }
@@ -52,9 +78,17 @@ open class RefreshComponent: UIView {
         return false
     }
 
-    public init(kind: Kind, threshold: CGFloat, actionHandler: @escaping () -> Void) {
+    /// Creates a refresh component.
+    /// - Parameters:
+    ///   - kind: The position and trigger mode of the component.
+    ///   - threshold: The height of the component and the pull distance needed to trigger a refresh.
+    ///   - configuration: The appearance and text. Pass `nil` to use `RefreshConfiguration.default`.
+    ///   - actionHandler: Called on the main thread when a refresh begins. Call
+    ///     `UIScrollViewRefreshWrapper.endRefreshing()` when the work finishes.
+    public init(kind: Kind, threshold: CGFloat, configuration: RefreshConfiguration? = nil, actionHandler: @escaping () -> Void) {
         self.kind = kind
         self.threshold = threshold
+        self.configuration = configuration ?? .default
         self.actionHandler = actionHandler
         super.init(frame: .zero)
 
@@ -65,14 +99,24 @@ open class RefreshComponent: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    /// Called when the component starts or stops refreshing. Subclasses must override this method.
+    /// - Parameter isRefreshing: `true` when a refresh begins, `false` after it has ended.
     open func refreshStateDidChange(_ isRefreshing: Bool) {
         fatalError("refreshStateDidChange(_:) has not been implemented")
     }
 
+    /// Called when the pull progress changes. Subclasses must override this method.
+    ///
+    /// Not called while refreshing, while hidden, or in the "no more data" state.
+    /// An automatic footer receives `1` when it begins refreshing and `0` after it ends.
+    /// - Parameter progress: The pull distance divided by `threshold`, clamped to `0...1`.
+    ///   `1` means releasing now will trigger a refresh.
     open func scrollProgressDidChange(_ progress: Float) {
         fatalError("scrollProgressDidChange(_:) has not been implemented")
     }
 
+    /// Called when the component enters or leaves the "no more data" state.
+    /// The default implementation does nothing.
     open func noMoreDataStateDidChange(_ isNoMoreData: Bool) {
     }
 
