@@ -32,7 +32,27 @@ A pull-to-refresh and load-more library for iOS, built as an extension on `UIScr
 
 ## Installation
 
+### CocoaPods
+
+```ruby
+pod 'Refreshing'
+```
+
+Then run:
+
+```bash
+pod install
+```
+
 ### Swift Package Manager
+
+In Xcode: **File → Add Packages…** and enter:
+
+```
+https://github.com/iLiuChang/Refreshing.git
+```
+
+Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
@@ -40,11 +60,10 @@ dependencies: [
 ]
 ```
 
-### CocoaPods
+### Manual
 
-```ruby
-pod 'Refreshing'
-```
+1. Download the files in the `Sources` folder
+2. Drag them into your Xcode project
 
 ## Usage
 
