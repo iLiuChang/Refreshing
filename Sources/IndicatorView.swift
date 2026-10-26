@@ -59,7 +59,7 @@ open class IndicatorView: RefreshComponent {
 
     open override func layoutSubviews() {
         super.layoutSubviews()
-        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let center = contentCenter
         arrowLayer.position = center
         indicator.center = center
     }
@@ -115,11 +115,16 @@ open class TextIndicatorView: IndicatorView {
 
     open override func layoutSubviews() {
         super.layoutSubviews()
-        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let center = contentCenter
+        let contentWidth = bounds.inset(by: configuration.contentInset).width
+        let fittingSize = textLabel.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: bounds.height))
         if isNoMoreData {
+            textLabel.bounds.size = CGSize(width: max(0, min(fittingSize.width, contentWidth)), height: fittingSize.height)
             textLabel.center = center
             return
         }
+        let maxTextWidth = contentWidth - indicator.bounds.width - configuration.spacing
+        textLabel.bounds.size = CGSize(width: max(0, min(fittingSize.width, maxTextWidth)), height: fittingSize.height)
         let halfSpacing = configuration.spacing / 2
         arrowLayer.position = center.move(x: -textLabel.bounds.midX - halfSpacing)
         indicator.center = center.move(x: -textLabel.bounds.midX - halfSpacing)
@@ -145,7 +150,6 @@ open class TextIndicatorView: IndicatorView {
     private func updateText(_ text: String) {
         guard textLabel.text != text else { return }
         textLabel.text = text
-        textLabel.sizeToFit()
         setNeedsLayout()
     }
 
@@ -232,6 +236,14 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
         setNeedsLayout()
     }
 
+}
+
+fileprivate extension RefreshComponent {
+    /// The center of the bounds inset by `RefreshConfiguration.contentInset`.
+    var contentCenter: CGPoint {
+        let rect = bounds.inset(by: configuration.contentInset)
+        return CGPoint(x: rect.midX, y: rect.midY)
+    }
 }
 
 fileprivate extension CGPoint {

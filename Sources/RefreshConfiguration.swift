@@ -46,7 +46,7 @@ public struct RefreshConfiguration {
     public var arrowColor: UIColor = .refreshDynamic(light: UIColor.black.withAlphaComponent(0.8), dark: UIColor.white.withAlphaComponent(0.8))
     /// The color of the activity indicator. Defaults to gray in light mode and white in dark mode.
     public var indicatorColor: UIColor = .refreshDynamic(light: .gray, dark: .white)
-    /// The insets of the content inside the component. Only applies to `.animation` and `.textAnimation`.
+    /// The insets of the content inside the component. Applies to `.indicator`, `.textIndicator`, `.animation` and `.textAnimation`.
     public var contentInset: UIEdgeInsets = .zero
     /// The distance between the arrow or activity indicator and the text,
     /// or between the animation view and the text in `.textAnimation`.
