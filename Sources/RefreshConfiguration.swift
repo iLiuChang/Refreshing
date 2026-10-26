@@ -15,7 +15,7 @@ import UIKit
 /// ```swift
 /// var configuration = RefreshConfiguration.default
 /// configuration.textColor = .white
-/// tableView.rfg.addRefreshHeader(type: .textIndicator, configuration: configuration) { ... }
+/// tableView.rfg.addRefreshHeader(style: .textIndicator, configuration: configuration) { ... }
 /// ```
 public struct RefreshConfiguration {
 

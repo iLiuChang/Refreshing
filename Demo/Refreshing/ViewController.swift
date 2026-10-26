@@ -93,12 +93,12 @@ enum DemoCase {
 
     var subtitle: String {
         switch self {
-        case .indicator: return "rfg.addRefreshHeader(type: .indicator)"
-        case .textIndicator: return "rfg.addRefreshHeader(type: .textIndicator)"
-        case .animation: return "rfg.addRefreshHeader(type: .animation(view))"
-        case .textAnimation: return "rfg.addRefreshHeader(type: .textAnimation(view))"
+        case .indicator: return "rfg.addRefreshHeader(style: .indicator)"
+        case .textIndicator: return "rfg.addRefreshHeader(style: .textIndicator)"
+        case .animation: return "rfg.addRefreshHeader(style: .animation(view))"
+        case .textAnimation: return "rfg.addRefreshHeader(style: .textAnimation(view))"
         case .automaticFooter: return "rfg.addRefreshFooter(..., automatic: true)"
-        case .noMoreData: return "endRefreshingWithNoMoreData() / resetNoMoreData()"
+        case .noMoreData: return "endFooterRefreshingWithNoMoreData() / resetNoMoreData()"
         case .customAppearance: return "RefreshConfiguration per header and footer"
         case .beginRefreshing: return "rfg.beginRefreshing() on appear"
         case .customComponent: return "addCustomRefreshHeader(RefreshComponent)"
@@ -255,33 +255,33 @@ final class RefreshListViewController: UIViewController, UITableViewDataSource, 
     private func installRefreshers() {
         switch demo {
         case .indicator, .collectionView:
-            addHeader(type: .indicator)
-            addFooter(type: .indicator)
+            addHeader(style: .indicator)
+            addFooter(style: .indicator)
 
         case .textIndicator:
-            addHeader(type: .textIndicator)
-            addFooter(type: .textIndicator)
+            addHeader(style: .textIndicator)
+            addFooter(style: .textIndicator)
 
         case .animation:
             var configuration = RefreshConfiguration.default
             configuration.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-            addHeader(type: .animation(DemoGIFView()), threshold: 80, configuration: configuration)
-            addFooter(type: .animation(DemoGIFView()), threshold: 80, configuration: configuration)
+            addHeader(style: .animation(DemoGIFView()), threshold: 80, configuration: configuration)
+            addFooter(style: .animation(DemoGIFView()), threshold: 80, configuration: configuration)
 
         case .textAnimation:
             var configuration = RefreshConfiguration.default
             configuration.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 4, right: 0)
             configuration.spacing = 6
-            addHeader(type: .textAnimation(DemoGIFView()), threshold: 80, configuration: configuration)
-            addFooter(type: .textAnimation(DemoGIFView()), threshold: 80, configuration: configuration)
+            addHeader(style: .textAnimation(DemoGIFView()), threshold: 80, configuration: configuration)
+            addFooter(style: .textAnimation(DemoGIFView()), threshold: 80, configuration: configuration)
 
         case .automaticFooter:
-            addHeader(type: .textIndicator)
-            addFooter(type: .textIndicator, automatic: true)
+            addHeader(style: .textIndicator)
+            addFooter(style: .textIndicator, automatic: true)
 
         case .noMoreData:
-            addHeader(type: .textIndicator)
-            addFooter(type: .textIndicator)
+            addHeader(style: .textIndicator)
+            addFooter(style: .textIndicator)
 
         case .customAppearance:
             var header = RefreshConfiguration()
@@ -293,7 +293,7 @@ final class RefreshListViewController: UIViewController, UITableViewDataSource, 
             header.arrowColor = .systemOrange
             header.indicatorColor = .systemOrange
             header.spacing = 6
-            addHeader(type: .textIndicator, configuration: header)
+            addHeader(style: .textIndicator, configuration: header)
 
             var footer = header
             footer.text.footIdle = "Pull up to load more"
@@ -301,28 +301,28 @@ final class RefreshListViewController: UIViewController, UITableViewDataSource, 
             footer.textColor = .systemTeal
             footer.arrowColor = .systemTeal
             footer.indicatorColor = .systemTeal
-            addFooter(type: .textIndicator, configuration: footer)
+            addFooter(style: .textIndicator, configuration: footer)
 
         case .beginRefreshing, .hideFooter, .paging, .embeddedPaging:
-            addHeader(type: .textIndicator)
-            addFooter(type: .textIndicator)
+            addHeader(style: .textIndicator)
+            addFooter(style: .textIndicator)
 
         case .customComponent:
             scrollView.rfg.addCustomRefreshHeader(ProgressRefreshHeader { [weak self] in
                 self?.refresh()
             })
-            addFooter(type: .textIndicator)
+            addFooter(style: .textIndicator)
         }
     }
 
-    private func addHeader(type: RefreshType, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil) {
-        scrollView.rfg.addRefreshHeader(type: type, threshold: threshold, configuration: configuration) { [weak self] in
+    private func addHeader(style: RefreshStyle, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil) {
+        scrollView.rfg.addRefreshHeader(style: style, threshold: threshold, configuration: configuration) { [weak self] in
             self?.refresh()
         }
     }
 
-    private func addFooter(type: RefreshType, automatic: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil) {
-        scrollView.rfg.addRefreshFooter(type: type, automatic: automatic, threshold: threshold, configuration: configuration) { [weak self] in
+    private func addFooter(style: RefreshStyle, automatic: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil) {
+        scrollView.rfg.addRefreshFooter(style: style, automatic: automatic, threshold: threshold, configuration: configuration) { [weak self] in
             self?.loadMore()
         }
     }
@@ -346,7 +346,7 @@ final class RefreshListViewController: UIViewController, UITableViewDataSource, 
             self.page = nextPage
             self.reload()
             if self.isPaging, self.page >= self.totalPages {
-                self.scrollView.rfg.endRefreshingWithNoMoreData()
+                self.scrollView.rfg.endFooterRefreshingWithNoMoreData()
             } else {
                 self.scrollView.rfg.endRefreshing()
             }

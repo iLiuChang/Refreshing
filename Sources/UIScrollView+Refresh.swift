@@ -19,7 +19,7 @@ extension UIScrollView {
 }
 
 /// The built-in styles of refresh components.
-public enum RefreshType {
+public enum RefreshStyle {
     /// An arrow that flips when the threshold is reached, replaced by an activity indicator while refreshing.
     /// An automatic footer only shows the activity indicator.
     case indicator
@@ -44,9 +44,9 @@ public struct UIScrollViewRefreshWrapper {
     }
 
     /// Whether a refresh header has been added.
-    public var isExistRefreshHeader: Bool { _header != nil }
+    public var hasRefreshHeader: Bool { _header != nil }
     /// Whether a refresh footer has been added.
-    public var isExistRefreshFooter: Bool { _footer != nil }
+    public var hasRefreshFooter: Bool { _footer != nil }
 
     /// Forces the header to be hidden (`true`) or shown (`false`). See `RefreshComponent.isHideRefresher`.
     public var isHideRefreshHeader: Bool? {
@@ -64,12 +64,12 @@ public struct UIScrollViewRefreshWrapper {
 
     /// Adds a refresh header, replacing the existing one.
     /// - Parameters:
-    ///   - type: The style of the header.
+    ///   - style: The style of the header.
     ///   - threshold: The height of the header and the pull distance needed to trigger a refresh.
     ///   - configuration: The appearance and text. Pass `nil` to use `RefreshConfiguration.default`.
     ///   - actionHandler: Called on the main thread when a refresh begins. Call `endRefreshing()` when the work finishes.
-    public func addRefreshHeader(type: RefreshType = .indicator, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil, actionHandler: @escaping (()->())) {
-        switch type {
+    public func addRefreshHeader(style: RefreshStyle = .indicator, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil, actionHandler: @escaping (()->())) {
+        switch style {
         case .indicator:
             _header = IndicatorView(isHeader: true, threshold: threshold, configuration: configuration, actionHandler: actionHandler)
         case .textIndicator:
@@ -83,15 +83,15 @@ public struct UIScrollViewRefreshWrapper {
     
     /// Adds a refresh footer, replacing the existing one.
     /// - Parameters:
-    ///   - type: The style of the footer.
+    ///   - style: The style of the footer.
     ///   - automatic: When `true`, the footer triggers automatically once the content is scrolled to the bottom;
     ///     otherwise it requires pulling up past the threshold and releasing.
     ///   - threshold: The height of the footer and the pull distance needed to trigger a refresh.
     ///   - configuration: The appearance and text. Pass `nil` to use `RefreshConfiguration.default`.
-    ///   - actionHandler: Called on the main thread when loading begins. Call `endRefreshing()` or
-    ///     `endRefreshingWithNoMoreData()` when the work finishes.
-    public func addRefreshFooter(type: RefreshType = .indicator, automatic: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil, actionHandler: @escaping (()->())) {
-        switch type {
+    ///   - actionHandler: Called on the main thread when loading begins. Call `endFooterRefreshing()`,
+    ///     `endRefreshing()`, or `endFooterRefreshingWithNoMoreData()` when the work finishes.
+    public func addRefreshFooter(style: RefreshStyle = .indicator, automatic: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil, actionHandler: @escaping (()->())) {
+        switch style {
         case .indicator:
             if automatic {
                 _footer = IndicatorAutoFooter(threshold: threshold, configuration: configuration, actionHandler: actionHandler)
@@ -134,12 +134,26 @@ public struct UIScrollViewRefreshWrapper {
         _footer?.endRefreshing()
     }
 
-    /// Ends refreshing of both the header and the footer, and puts the footer into the "no more data" state.
+    /// Ends refreshing of the header only, restoring the top content inset with an animation.
+    ///
+    /// Does nothing if there is no header or the header is not refreshing.
+    public func endHeaderRefreshing() {
+        _header?.endRefreshing()
+    }
+
+    /// Ends refreshing of the footer only, restoring the bottom content inset with an animation.
+    ///
+    /// Does nothing if there is no footer or the footer is not refreshing.
+    /// Does not change the "no more data" state; call `endFooterRefreshingWithNoMoreData()` or `resetNoMoreData()` for that.
+    public func endFooterRefreshing() {
+        _footer?.endRefreshing()
+    }
+
+    /// Ends refreshing of the footer only, and puts the footer into the "no more data" state.
     ///
     /// In that state the footer shows `RefreshConfiguration.Text.noMoreData` (text styles only) and no longer
     /// triggers loading until `resetNoMoreData()` is called.
-    public func endRefreshingWithNoMoreData() {
-        _header?.endRefreshing()
+    public func endFooterRefreshingWithNoMoreData() {
         _footer?.endRefreshingWithNoMoreData()
     }
 

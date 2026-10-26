@@ -46,7 +46,7 @@ open class RefreshComponent: UIView {
     }
     /// Whether the component is in the "no more data" state, in which it never triggers a refresh.
     ///
-    /// Set by `UIScrollViewRefreshWrapper.endRefreshingWithNoMoreData()` and cleared by
+    /// Set by `UIScrollViewRefreshWrapper.endFooterRefreshingWithNoMoreData()` and cleared by
     /// `UIScrollViewRefreshWrapper.resetNoMoreData()`.
     public private(set) var isNoMoreData = false {
         didSet {

@@ -72,11 +72,11 @@ dependencies: [
 ```swift
 import Refreshing
 
-tableView.rfg.addRefreshHeader(type: .textIndicator) { [weak self] in
+tableView.rfg.addRefreshHeader(style: .textIndicator) { [weak self] in
     self?.reloadData()
 }
 
-tableView.rfg.addRefreshFooter(type: .textIndicator) { [weak self] in
+tableView.rfg.addRefreshFooter(style: .textIndicator) { [weak self] in
     self?.loadMore()
 }
 ```
@@ -89,7 +89,7 @@ tableView.rfg.endRefreshing()
 
 ### Built-in Styles
 
-| Type | Appearance |
+| Style (`RefreshStyle`) | Appearance |
 |---|---|
 | `.indicator` | Arrow that flips at the threshold, then an activity indicator |
 | `.textIndicator` | Same as `.indicator`, with a text label |
@@ -101,7 +101,7 @@ An automatic footer (`.indicator` or `.textIndicator` with `automatic: true`) sh
 ### Automatic Footer
 
 ```swift
-tableView.rfg.addRefreshFooter(type: .textIndicator, automatic: true) { [weak self] in
+tableView.rfg.addRefreshFooter(style: .textIndicator, automatic: true) { [weak self] in
     self?.loadMore()
 }
 ```
@@ -109,7 +109,7 @@ tableView.rfg.addRefreshFooter(type: .textIndicator, automatic: true) { [weak se
 ### No More Data
 
 ```swift
-tableView.rfg.endRefreshingWithNoMoreData()
+tableView.rfg.endFooterRefreshingWithNoMoreData()
 
 // After a header refresh replaces the list:
 tableView.rfg.resetNoMoreData()
@@ -125,7 +125,7 @@ configuration.textColor = .systemOrange
 configuration.arrowColor = .systemOrange
 configuration.indicatorColor = .systemOrange
 
-tableView.rfg.addRefreshHeader(type: .textIndicator, configuration: configuration) { [weak self] in
+tableView.rfg.addRefreshHeader(style: .textIndicator, configuration: configuration) { [weak self] in
     self?.reloadData()
 }
 ```
@@ -149,7 +149,7 @@ final class GIFView: UIImageView, AnimationViewWrapper {
     }
 }
 
-tableView.rfg.addRefreshHeader(type: .animation(GIFView()), threshold: 80) { [weak self] in
+tableView.rfg.addRefreshHeader(style: .animation(GIFView()), threshold: 80) { [weak self] in
     self?.reloadData()
 }
 ```
@@ -204,17 +204,19 @@ Access it through `scrollView.rfg`. A scroll view has at most one header and one
 
 | Property / Method | Description |
 |---|---|
-| `isExistRefreshHeader` | Whether a header has been added. |
-| `isExistRefreshFooter` | Whether a footer has been added. |
+| `hasRefreshHeader` | Whether a header has been added. |
+| `hasRefreshFooter` | Whether a footer has been added. |
 | `isHideRefreshHeader` | Forces the header hidden (`true`) or shown (`false`). |
 | `isHideRefreshFooter` | Forces the footer hidden or shown. `nil` hides it while the content is shorter than the scroll view. |
-| `addRefreshHeader(`<br>`type:`<br>`threshold:`<br>`configuration:`<br>`actionHandler:)` | Adds a header. `threshold` defaults to `60`. |
-| `addRefreshFooter(`<br>`type:`<br>`automatic:`<br>`threshold:`<br>`configuration:`<br>`actionHandler:)` | Adds a footer. `automatic` triggers it at the bottom without a pull. |
+| `addRefreshHeader(`<br>`style:`<br>`threshold:`<br>`configuration:`<br>`actionHandler:)` | Adds a header. `threshold` defaults to `60`. |
+| `addRefreshFooter(`<br>`style:`<br>`automatic:`<br>`threshold:`<br>`configuration:`<br>`actionHandler:)` | Adds a footer. `automatic` triggers it at the bottom without a pull. |
 | `removeRefreshHeader()` | Removes the header and restores its content inset. |
 | `removeRefreshFooter()` | Removes the footer and restores its content inset. |
 | `beginRefreshing()` | Starts a header refresh and calls its action handler. |
 | `endRefreshing()` | Ends refreshing of both the header and the footer. |
-| `endRefreshingWithNoMoreData()` | Ends refreshing and puts the footer into the "no more data" state. |
+| `endHeaderRefreshing()` | Ends refreshing of the header only. |
+| `endFooterRefreshing()` | Ends refreshing of the footer only. |
+| `endFooterRefreshingWithNoMoreData()` | Ends refreshing of the footer and puts it into the "no more data" state. |
 | `resetNoMoreData()` | Clears the "no more data" state so the footer can load again. |
 | `addCustomRefreshHeader(_:)` | Adds a custom `RefreshComponent` whose `kind` is `.header`. |
 | `addCustomRefreshFooter(_:)` | Adds a custom `RefreshComponent` whose `kind` is `.footer`. |
