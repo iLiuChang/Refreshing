@@ -1,6 +1,6 @@
 # Refreshing
 
-![Swift](https://img.shields.io/badge/Swift-5.0%2B-orange.svg)
+![Swift](https://img.shields.io/badge/Swift-5.5%2B-orange.svg)
 ![Platform](https://img.shields.io/badge/Platform-iOS%2011.0%2B-lightgrey.svg)
 ![Version](https://img.shields.io/badge/Version-2.0.0-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
@@ -28,7 +28,7 @@ A pull-to-refresh and load-more library for iOS, built as an extension on `UIScr
 ## Requirements
 
 - iOS 11.0+
-- Swift 5.0+
+- Swift 5.5+
 
 ## Installation
 
