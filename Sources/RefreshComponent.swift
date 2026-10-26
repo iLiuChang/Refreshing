@@ -153,11 +153,19 @@ open class RefreshComponent: UIView {
             frame = CGRect(x: 0, y: -threshold, width: scrollView.bounds.width, height: threshold)
         default:
             sizeToken = scrollView.observe(\.contentSize) { [weak self] scrollView, _ in
-                self?.frame = CGRect(x: 0, y: scrollView.contentSize.height, width: scrollView.bounds.width, height: self?.threshold ?? 0)
+                self?.updateFooterFrame(scrollView)
                 if self?.isHideRefresher == nil {
                     self?.isHidden = scrollView.contentSize.height <= scrollView.bounds.height
                 }
             }
+        }
+    }
+
+    private func updateFooterFrame(_ scrollView: UIScrollView) {
+        let systemInsetBottom = scrollView.adjustedContentInset.bottom - scrollView.contentInset.bottom
+        let newFrame = CGRect(x: 0, y: scrollView.contentSize.height + systemInsetBottom, width: scrollView.bounds.width, height: threshold)
+        if frame != newFrame {
+            frame = newFrame
         }
     }
 
