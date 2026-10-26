@@ -66,7 +66,7 @@
 		2863F5582AC2802100670CD4 /* Refreshing */ = {
 			isa = PBXGroup;
 			children = (
-				2863F56D2AC2803600670CD4 /* Source */,
+				2863F56D2AC2803600670CD4 /* Sources */,
 				2863F5592AC2802100670CD4 /* AppDelegate.swift */,
 				2863F55B2AC2802100670CD4 /* SceneDelegate.swift */,
 				2863F55D2AC2802100670CD4 /* ViewController.swift */,
@@ -78,7 +78,7 @@
 			path = Refreshing;
 			sourceTree = "<group>";
 		};
-		2863F56D2AC2803600670CD4 /* Source */ = {
+		2863F56D2AC2803600670CD4 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				2863F56E2AC2803600670CD4 /* IndicatorView.swift */,
@@ -87,8 +87,8 @@
 				282210D42AF2296100A9DFE9 /* AnimationImageView.swift */,
 				28C44E882E795B970007BCFC /* Configuration.swift */,
 			);
-			name = Source;
-			path = ../../Source;
+			name = Sources;
+			path = ../../Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

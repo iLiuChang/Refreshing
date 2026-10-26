@@ -22,17 +22,34 @@ open class RefreshComponent: UIView {
             }
         }
     }
+    public private(set) var isNoMoreData = false {
+        didSet {
+            guard isNoMoreData != oldValue else { return }
+            noMoreDataStateDidChange(isNoMoreData)
+        }
+    }
     private let actionHandler: () -> Void
     private var scrollView: UIScrollView? { superview as? UIScrollView }
     private var offsetToken: NSKeyValueObservation?
     private var stateToken: NSKeyValueObservation?
     private var sizeToken: NSKeyValueObservation?
-    private var beginContentInset = UIEdgeInsets.zero
+    private var appliedInset: CGFloat = 0
     private var isRefreshing = false {
-        didSet { refreshStateDidChange(isRefreshing) }
+        didSet {
+            guard isRefreshing != oldValue else { return }
+            refreshStateDidChange(isRefreshing)
+        }
     }
     private var progress: Float = 0 {
-        didSet { scrollProgressDidChange(progress) }
+        didSet {
+            guard progress != oldValue else { return }
+            scrollProgressDidChange(progress)
+        }
+    }
+
+    private var isAutoFooter: Bool {
+        if case .footer(true) = kind { return true }
+        return false
     }
 
     public init(kind: Kind, threshold: CGFloat, actionHandler: @escaping () -> Void) {
@@ -55,7 +72,10 @@ open class RefreshComponent: UIView {
     open func scrollProgressDidChange(_ progress: Float) {
         fatalError("scrollProgressDidChange(_:) has not been implemented")
     }
-    
+
+    open func noMoreDataStateDidChange(_ isNoMoreData: Bool) {
+    }
+
     open override func willMove(toWindow newWindow: UIWindow?) {
         if newWindow == nil {
             clearObserver()
@@ -66,6 +86,9 @@ open class RefreshComponent: UIView {
     }
 
     open override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview !== superview, let oldScrollView = scrollView {
+            cancelRefreshing(oldScrollView)
+        }
         guard let scrollView = newSuperview as? UIScrollView, window != nil else {
             clearObserver()
             return
@@ -101,67 +124,63 @@ open class RefreshComponent: UIView {
     }
 
     private func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if isRefreshing || isHidden { return }
+        if isRefreshing || isHidden || isNoMoreData { return }
 
         switch kind {
         case .header:
-            progress = Float(min(1, max(0, -(scrollView.contentOffset.y + scrollView.contentInsetTop) / threshold)))
+            progress = Float(min(1, max(0, -(scrollView.contentOffset.y + scrollView.adjustedContentInset.top) / threshold)))
         case .footer(let auto):
             if scrollView.contentSize.height <= scrollView.bounds.height { break }
             if auto {
-                if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInsetBottom {
+                if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom {
                     beginRefreshing()
                 }
             } else {
-                progress = Float(min(1, max(0, (scrollView.contentOffset.y + scrollView.bounds.height - scrollView.contentSize.height - scrollView.contentInsetBottom) / threshold)))
+                progress = Float(min(1, max(0, (scrollView.contentOffset.y + scrollView.bounds.height - scrollView.contentSize.height - scrollView.adjustedContentInset.bottom) / threshold)))
             }
         }
     }
 
     private func scrollViewDidEndDragging(_ scrollView: UIScrollView) {
-        if isHidden { return }
-
-        var isAuto = false
-        switch kind {
-        case .footer(let auto):
-            isAuto = auto
-        default:
-            isAuto = false
-        }
-        if isRefreshing || progress < 1 || isAuto { return }
+        if isHidden || isNoMoreData || isAutoFooter { return }
+        if isRefreshing || progress < 1 { return }
         beginRefreshing()
     }
 
     func beginRefreshing() {
-        guard let scrollView = scrollView, !isRefreshing else { return }
-        beginContentInset = scrollView.contentInset
+        guard let scrollView = scrollView, !isRefreshing, !isNoMoreData,
+              !isOtherComponentRefreshing(in: scrollView) else { return }
         progress = 1
         isRefreshing = true
         DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.3, animations: {
+            guard self.isRefreshing, self.scrollView === scrollView else { return }
+            self.appliedInset = self.threshold
+            UIView.animate(withDuration: 0.3) {
                 switch self.kind {
                 case .header:
-                    scrollView.contentOffset.y = -self.threshold - scrollView.contentInsetTop
                     scrollView.contentInset.top += self.threshold
+                    scrollView.contentOffset.y = -scrollView.adjustedContentInset.top
                 case .footer(let auto):
-                    if auto {
-                        scrollView.contentOffset.y = self.threshold + scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInsetBottom
-                    }
                     scrollView.contentInset.bottom += self.threshold
+                    if auto {
+                        scrollView.contentOffset.y = scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom
+                    }
                 }
-            }, completion: { _ in
-                self.actionHandler()
-            })
+            }
+            self.actionHandler()
         }
     }
 
     func endRefreshing(completion: (() -> Void)? = nil) {
-        guard let scrollView = scrollView else { return }
-        guard isRefreshing else { completion?(); return }
+        guard let scrollView = scrollView, isRefreshing else { completion?(); return }
 
         DispatchQueue.main.async {
+            guard self.isRefreshing, self.scrollView === scrollView else { completion?(); return }
+            let inset = self.appliedInset
+            self.appliedInset = 0
             UIView.animate(withDuration: 0.3, animations: {
-                scrollView.contentInset = self.beginContentInset
+                self.removeInset(inset, from: scrollView)
+                self.adjustContentOffsetIfNeeded(scrollView)
             }, completion: { _ in
                 self.isRefreshing = false
                 self.progress = 0
@@ -170,15 +189,49 @@ open class RefreshComponent: UIView {
         }
     }
 
-}
-
-
-private extension UIScrollView {
-    var contentInsetTop: CGFloat {
-        return contentInset.top + adjustedContentInset.top
+    func endRefreshingWithNoMoreData() {
+        endRefreshing { [weak self] in
+            self?.isNoMoreData = true
+        }
     }
 
-    var contentInsetBottom: CGFloat {
-        return contentInset.bottom + adjustedContentInset.bottom
+    func resetNoMoreData() {
+        isNoMoreData = false
     }
+
+    private func cancelRefreshing(_ scrollView: UIScrollView) {
+        guard isRefreshing else { return }
+        removeInset(appliedInset, from: scrollView)
+        appliedInset = 0
+        isRefreshing = false
+        progress = 0
+    }
+
+    private func removeInset(_ inset: CGFloat, from scrollView: UIScrollView) {
+        guard inset != 0 else { return }
+        switch kind {
+        case .header:
+            scrollView.contentInset.top -= inset
+        case .footer:
+            scrollView.contentInset.bottom -= inset
+        }
+    }
+
+    private func adjustContentOffsetIfNeeded(_ scrollView: UIScrollView) {
+        guard !scrollView.isDragging else { return }
+        let minOffsetY = -scrollView.adjustedContentInset.top
+        let maxOffsetY = max(minOffsetY, scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom)
+        let offsetY = min(max(scrollView.contentOffset.y, minOffsetY), maxOffsetY)
+        if offsetY != scrollView.contentOffset.y {
+            scrollView.contentOffset.y = offsetY
+        }
+    }
+
+    private func isOtherComponentRefreshing(in scrollView: UIScrollView) -> Bool {
+        scrollView.subviews.contains { view in
+            guard let component = view as? RefreshComponent, component !== self else { return false }
+            return component.isRefreshing
+        }
+    }
+
 }

@@ -18,6 +18,7 @@ public struct Configuration {
         public var headIdle: String = "Pull down to refresh"
         public var footIdle: String = "Pull up to load more"
         public var release: String = "Release to refresh"
+        public var noMoreData: String = "No more data"
     }
 
     public struct AnimationImageLayout {

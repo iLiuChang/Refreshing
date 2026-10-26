@@ -41,15 +41,13 @@ public struct UIScrollViewRefreshWrapper {
     public var isExistRefreshFooter: Bool { _footer != nil }
 
     public var isHideRefreshHeader: Bool? {
-        didSet {
-            _header?.isHideRefresher = isHideRefreshHeader
-        }
+        get { _header?.isHideRefresher }
+        nonmutating set { _header?.isHideRefresher = newValue }
     }
 
     public var isHideRefreshFooter: Bool? {
-        didSet {
-            _footer?.isHideRefresher = isHideRefreshFooter
-        }
+        get { _footer?.isHideRefresher }
+        nonmutating set { _footer?.isHideRefresher = newValue }
     }
 
     public mutating func addRefreshHeader(type: RefreshType = .indicator(.black), threshold: CGFloat = 60, actionHandler: @escaping (()->())) {
@@ -101,6 +99,15 @@ public struct UIScrollViewRefreshWrapper {
     public func endRefreshing() {
         _header?.endRefreshing()
         _footer?.endRefreshing()
+    }
+
+    public func endRefreshingWithNoMoreData() {
+        _header?.endRefreshing()
+        _footer?.endRefreshingWithNoMoreData()
+    }
+
+    public func resetNoMoreData() {
+        _footer?.resetNoMoreData()
     }
 
     public mutating func addCustomRefreshHeader(_ header: RefreshComponent) {

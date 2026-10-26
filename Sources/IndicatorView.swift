@@ -76,6 +76,10 @@ open class IndicatorView: RefreshComponent {
         }
     }
 
+    open override func noMoreDataStateDidChange(_ isNoMoreData: Bool) {
+        arrowLayer.isHidden = isNoMoreData
+    }
+
 }
 
 open class TextIndicatorView: IndicatorView {
@@ -91,9 +95,14 @@ open class TextIndicatorView: IndicatorView {
         return label
     }()
 
+    private var idleText: String {
+        isHeader ? Configuration.text.headIdle : Configuration.text.footIdle
+    }
+
     public override init(isHeader: Bool, style:RefreshStyle, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         super.init(isHeader: isHeader, style:style, threshold: threshold, actionHandler: actionHandler)
         addSubview(textLabel)
+        updateText(idleText)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -103,6 +112,10 @@ open class TextIndicatorView: IndicatorView {
     open override func layoutSubviews() {
         super.layoutSubviews()
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        if isNoMoreData {
+            textLabel.center = center
+            return
+        }
         arrowLayer.position = center.move(x: -textLabel.bounds.midX - 4)
         indicator.center = center.move(x: -textLabel.bounds.midX - 4)
         textLabel.center = center.move(x: indicator.bounds.midX + 4)
@@ -110,14 +123,25 @@ open class TextIndicatorView: IndicatorView {
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        textLabel.text = isRefreshing ? Configuration.text.loading : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
-        textLabel.sizeToFit()
+        updateText(isRefreshing ? Configuration.text.loading : idleText)
     }
 
     open override func scrollProgressDidChange(_ progress: Float) {
         super.scrollProgressDidChange(progress)
-        textLabel.text = progress == 1 ? Configuration.text.release : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
+        updateText(progress == 1 ? Configuration.text.release : idleText)
+    }
+
+    open override func noMoreDataStateDidChange(_ isNoMoreData: Bool) {
+        super.noMoreDataStateDidChange(isNoMoreData)
+        updateText(isNoMoreData ? Configuration.text.noMoreData : idleText)
+        setNeedsLayout()
+    }
+
+    private func updateText(_ text: String) {
+        guard textLabel.text != text else { return }
+        textLabel.text = text
         textLabel.sizeToFit()
+        setNeedsLayout()
     }
 
 }
@@ -191,14 +215,30 @@ open class TextIndicatorAutoFooter: IndicatorAutoFooter {
     open override func layoutSubviews() {
         super.layoutSubviews()
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        if isNoMoreData {
+            textLabel.center = center
+            return
+        }
         indicator.center = center.move(x: -textLabel.bounds.midX - 4)
         textLabel.center = center.move(x: indicator.bounds.midX + 4)
     }
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        textLabel.text = isRefreshing ? Configuration.text.loading : ""
+        updateText(isRefreshing ? Configuration.text.loading : "")
+    }
+
+    open override func noMoreDataStateDidChange(_ isNoMoreData: Bool) {
+        super.noMoreDataStateDidChange(isNoMoreData)
+        updateText(isNoMoreData ? Configuration.text.noMoreData : "")
+        setNeedsLayout()
+    }
+
+    private func updateText(_ text: String) {
+        guard textLabel.text != text else { return }
+        textLabel.text = text
         textLabel.sizeToFit()
+        setNeedsLayout()
     }
 
 }

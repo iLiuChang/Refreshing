@@ -20,6 +20,7 @@ public enum RefreshStatus {
 open class AnimationImageView: RefreshComponent {
 
     public let animationView: AnimationViewWrapper
+    private var isReleasable = false
 
     public init(animationView: AnimationViewWrapper, kind: RefreshComponent.Kind, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         animationView.translatesAutoresizingMaskIntoConstraints = false
@@ -48,7 +49,10 @@ open class AnimationImageView: RefreshComponent {
     }
     
     open override func scrollProgressDidChange(_ progress: Float) {
-        if progress == 1 {
+        let releasable = progress == 1
+        guard releasable != isReleasable else { return }
+        isReleasable = releasable
+        if releasable {
             animationView.startAnimating(status: .release)
         } else {
             animationView.stopAnimating()
@@ -82,10 +86,15 @@ open class AnimationTextImageView: AnimationImageView {
             return false
         }
     }
+
+    private var idleText: String {
+        isHeader ? Configuration.text.headIdle : Configuration.text.footIdle
+    }
     
     public init(animationView: AnimationViewWrapper, style:RefreshStyle, kind: RefreshComponent.Kind, threshold: CGFloat, actionHandler: @escaping () -> Void) {
         self.style = style
         super.init(animationView:animationView, kind: kind, threshold: threshold, actionHandler: actionHandler)
+        updateText(idleText)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -115,12 +124,22 @@ open class AnimationTextImageView: AnimationImageView {
 
     open override func refreshStateDidChange(_ isRefreshing: Bool) {
         super.refreshStateDidChange(isRefreshing)
-        textLabel.text = isRefreshing ? Configuration.text.loading : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
+        updateText(isRefreshing ? Configuration.text.loading : idleText)
     }
 
     open override func scrollProgressDidChange(_ progress: Float) {
         super.scrollProgressDidChange(progress)
-        textLabel.text = progress == 1 ? Configuration.text.release : (isHeader ? Configuration.text.headIdle : Configuration.text.footIdle)
+        updateText(progress == 1 ? Configuration.text.release : idleText)
+    }
+
+    open override func noMoreDataStateDidChange(_ isNoMoreData: Bool) {
+        super.noMoreDataStateDidChange(isNoMoreData)
+        updateText(isNoMoreData ? Configuration.text.noMoreData : idleText)
+    }
+
+    private func updateText(_ text: String) {
+        guard textLabel.text != text else { return }
+        textLabel.text = text
     }
 
 }
