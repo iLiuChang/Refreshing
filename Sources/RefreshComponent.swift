@@ -21,10 +21,10 @@ open class RefreshComponent: UIView {
     public enum Kind {
         /// Placed above the content; triggered by pulling down past the threshold and releasing.
         case header
-        /// Placed below the content. When the associated value is `true`, the footer triggers
+        /// Placed below the content. When `automatic` is `true`, the footer triggers
         /// automatically once the content is scrolled to the bottom; otherwise it requires pulling up
         /// past the threshold and releasing.
-        case footer(Bool)
+        case footer(automatic: Bool)
     }
 
     /// The position and trigger mode of the component.
@@ -73,8 +73,8 @@ open class RefreshComponent: UIView {
         }
     }
 
-    private var isAutoFooter: Bool {
-        if case .footer(true) = kind { return true }
+    private var isAutomaticFooter: Bool {
+        if case .footer(automatic: true) = kind { return true }
         return false
     }
 
@@ -181,9 +181,9 @@ open class RefreshComponent: UIView {
         switch kind {
         case .header:
             progress = Float(min(1, max(0, -(scrollView.contentOffset.y + scrollView.adjustedContentInset.top) / threshold)))
-        case .footer(let auto):
+        case .footer(let automatic):
             if scrollView.contentSize.height <= scrollView.bounds.height { break }
-            if auto {
+            if automatic {
                 if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom {
                     beginRefreshing()
                 }
@@ -194,7 +194,7 @@ open class RefreshComponent: UIView {
     }
 
     private func scrollViewDidEndDragging(_ scrollView: UIScrollView) {
-        if isHidden || isNoMoreData || isAutoFooter { return }
+        if isHidden || isNoMoreData || isAutomaticFooter { return }
         if isRefreshing || progress < 1 { return }
         beginRefreshing()
     }
@@ -212,9 +212,9 @@ open class RefreshComponent: UIView {
                 case .header:
                     scrollView.contentInset.top += self.threshold
                     scrollView.contentOffset.y = -scrollView.adjustedContentInset.top
-                case .footer(let auto):
+                case .footer(let automatic):
                     scrollView.contentInset.bottom += self.threshold
-                    if auto {
+                    if automatic {
                         scrollView.contentOffset.y = scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom
                     }
                 }

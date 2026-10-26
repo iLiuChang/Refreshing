@@ -63,7 +63,7 @@ enum DemoCase {
     case textIndicator
     case animation
     case textAnimation
-    case autoFooter
+    case automaticFooter
     case noMoreData
     case customAppearance
     case beginRefreshing
@@ -79,7 +79,7 @@ enum DemoCase {
         case .textIndicator: return "Text Indicator"
         case .animation: return "Animation"
         case .textAnimation: return "Text Animation"
-        case .autoFooter: return "Automatic Footer"
+        case .automaticFooter: return "Automatic Footer"
         case .noMoreData: return "No More Data"
         case .customAppearance: return "Custom Appearance"
         case .beginRefreshing: return "Begin Refreshing"
@@ -97,7 +97,7 @@ enum DemoCase {
         case .textIndicator: return "rfg.addRefreshHeader(type: .textIndicator)"
         case .animation: return "rfg.addRefreshHeader(type: .animation(view))"
         case .textAnimation: return "rfg.addRefreshHeader(type: .textAnimation(view))"
-        case .autoFooter: return "rfg.addRefreshFooter(..., auto: true)"
+        case .automaticFooter: return "rfg.addRefreshFooter(..., automatic: true)"
         case .noMoreData: return "endRefreshingWithNoMoreData() / resetNoMoreData()"
         case .customAppearance: return "RefreshConfiguration per header and footer"
         case .beginRefreshing: return "rfg.beginRefreshing() on appear"
@@ -111,7 +111,7 @@ enum DemoCase {
 
     static let sections: [(title: String, cases: [DemoCase])] = [
         ("Built-in Styles", [.indicator, .textIndicator, .animation, .textAnimation]),
-        ("Footer", [.autoFooter, .noMoreData, .paging, .embeddedPaging]),
+        ("Footer", [.automaticFooter, .noMoreData, .paging, .embeddedPaging]),
         ("Configuration", [.customAppearance, .beginRefreshing]),
         ("Advanced", [.customComponent, .hideFooter, .collectionView]),
     ]
@@ -275,9 +275,9 @@ final class RefreshListViewController: UIViewController, UITableViewDataSource, 
             addHeader(type: .textAnimation(DemoGIFView()), threshold: 80, configuration: configuration)
             addFooter(type: .textAnimation(DemoGIFView()), threshold: 80, configuration: configuration)
 
-        case .autoFooter:
+        case .automaticFooter:
             addHeader(type: .textIndicator)
-            addFooter(type: .textIndicator, auto: true)
+            addFooter(type: .textIndicator, automatic: true)
 
         case .noMoreData:
             addHeader(type: .textIndicator)
@@ -321,8 +321,8 @@ final class RefreshListViewController: UIViewController, UITableViewDataSource, 
         }
     }
 
-    private func addFooter(type: RefreshType, auto: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil) {
-        scrollView.rfg.addRefreshFooter(type: type, auto: auto, threshold: threshold, configuration: configuration) { [weak self] in
+    private func addFooter(type: RefreshType, automatic: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil) {
+        scrollView.rfg.addRefreshFooter(type: type, automatic: automatic, threshold: threshold, configuration: configuration) { [weak self] in
             self?.loadMore()
         }
     }

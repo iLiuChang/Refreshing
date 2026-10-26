@@ -42,7 +42,7 @@ open class IndicatorView: RefreshComponent {
     ///   - actionHandler: Called on the main thread when a refresh begins.
     public init(isHeader: Bool, threshold: CGFloat, configuration: RefreshConfiguration? = nil, actionHandler: @escaping () -> Void) {
         self.isHeader = isHeader
-        super.init(kind: isHeader ? .header : .footer(false), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
+        super.init(kind: isHeader ? .header : .footer(automatic: false), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
         layer.addSublayer(arrowLayer)
         addSubview(indicator)
         updateArrowColor()
@@ -164,7 +164,7 @@ open class IndicatorAutoFooter: RefreshComponent {
     ///   - configuration: The appearance and text. Pass `nil` to use `RefreshConfiguration.default`.
     ///   - actionHandler: Called on the main thread when loading begins.
     public init(threshold: CGFloat, configuration: RefreshConfiguration? = nil, actionHandler: @escaping () -> Void) {
-        super.init(kind: .footer(true), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
+        super.init(kind: .footer(automatic: true), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
         addSubview(indicator)
     }
 

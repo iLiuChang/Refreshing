@@ -96,12 +96,12 @@ tableView.rfg.endRefreshing()
 | `.animation(view)` | A custom animation view filling the component |
 | `.textAnimation(view)` | A custom animation view with a text label below it |
 
-An automatic footer (`.indicator` or `.textIndicator` with `auto: true`) shows only the activity indicator, plus text while loading or when there is no more data.
+An automatic footer (`.indicator` or `.textIndicator` with `automatic: true`) shows only the activity indicator, plus text while loading or when there is no more data.
 
 ### Automatic Footer
 
 ```swift
-tableView.rfg.addRefreshFooter(type: .textIndicator, auto: true) { [weak self] in
+tableView.rfg.addRefreshFooter(type: .textIndicator, automatic: true) { [weak self] in
     self?.loadMore()
 }
 ```
@@ -208,8 +208,8 @@ Access it through `scrollView.rfg`. A scroll view has at most one header and one
 | `isExistRefreshFooter` | Whether a footer has been added. |
 | `isHideRefreshHeader` | Forces the header hidden (`true`) or shown (`false`). |
 | `isHideRefreshFooter` | Forces the footer hidden or shown. `nil` hides it while the content is shorter than the scroll view. |
-| `addRefreshHeader(type:threshold:configuration:actionHandler:)` | Adds a header. `threshold` defaults to `60`. |
-| `addRefreshFooter(type:auto:threshold:configuration:actionHandler:)` | Adds a footer. `auto` triggers it at the bottom without a pull. |
+| `addRefreshHeader(`<br>`type:`<br>`threshold:`<br>`configuration:`<br>`actionHandler:)` | Adds a header. `threshold` defaults to `60`. |
+| `addRefreshFooter(`<br>`type:`<br>`automatic:`<br>`threshold:`<br>`configuration:`<br>`actionHandler:)` | Adds a footer. `automatic` triggers it at the bottom without a pull. |
 | `removeRefreshHeader()` | Removes the header and restores its content inset. |
 | `removeRefreshFooter()` | Removes the footer and restores its content inset. |
 | `beginRefreshing()` | Starts a header refresh and calls its action handler. |
@@ -236,7 +236,7 @@ Access it through `scrollView.rfg`. A scroll view has at most one header and one
 
 | Property / Method | Description |
 |---|---|
-| `kind` | `.header`, or `.footer(auto)`. |
+| `kind` | `.header`, or `.footer(automatic:)`. |
 | `threshold` | Height of the component and the pull distance that triggers a refresh. |
 | `configuration` | The configuration captured at creation. |
 | `isHideRefresher` | Forces the component hidden or shown. A hidden component never triggers. |

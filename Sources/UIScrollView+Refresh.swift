@@ -84,30 +84,30 @@ public struct UIScrollViewRefreshWrapper {
     /// Adds a refresh footer, replacing the existing one.
     /// - Parameters:
     ///   - type: The style of the footer.
-    ///   - auto: When `true`, the footer triggers automatically once the content is scrolled to the bottom;
+    ///   - automatic: When `true`, the footer triggers automatically once the content is scrolled to the bottom;
     ///     otherwise it requires pulling up past the threshold and releasing.
     ///   - threshold: The height of the footer and the pull distance needed to trigger a refresh.
     ///   - configuration: The appearance and text. Pass `nil` to use `RefreshConfiguration.default`.
     ///   - actionHandler: Called on the main thread when loading begins. Call `endRefreshing()` or
     ///     `endRefreshingWithNoMoreData()` when the work finishes.
-    public func addRefreshFooter(type: RefreshType = .indicator, auto: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil, actionHandler: @escaping (()->())) {
+    public func addRefreshFooter(type: RefreshType = .indicator, automatic: Bool = false, threshold: CGFloat = 60, configuration: RefreshConfiguration? = nil, actionHandler: @escaping (()->())) {
         switch type {
         case .indicator:
-            if auto {
+            if automatic {
                 _footer = IndicatorAutoFooter(threshold: threshold, configuration: configuration, actionHandler: actionHandler)
             } else {
                 _footer = IndicatorView(isHeader: false, threshold: threshold, configuration: configuration, actionHandler: actionHandler)
             }
         case .textIndicator:
-            if auto {
+            if automatic {
                 _footer = TextIndicatorAutoFooter(threshold: threshold, configuration: configuration, actionHandler: actionHandler)
             } else {
                 _footer = TextIndicatorView(isHeader: false, threshold: threshold, configuration: configuration, actionHandler: actionHandler)
             }
         case .animation(let view):
-            _footer = AnimationImageView(animationView: view, kind: .footer(auto), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
+            _footer = AnimationImageView(animationView: view, kind: .footer(automatic: automatic), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
         case .textAnimation(let view):
-            _footer = AnimationTextImageView(animationView: view, kind: .footer(auto), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
+            _footer = AnimationTextImageView(animationView: view, kind: .footer(automatic: automatic), threshold: threshold, configuration: configuration, actionHandler: actionHandler)
         }
     }
     
