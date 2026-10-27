@@ -497,7 +497,7 @@ final class ProgressRefreshHeader: RefreshComponent {
     private let indicator = UIActivityIndicatorView(style: .medium)
 
     init(actionHandler: @escaping () -> Void) {
-        super.init(kind: .header, threshold: 60, actionHandler: actionHandler)
+        super.init(kind: .header, threshold: 70, actionHandler: actionHandler)
         layer.addSublayer(trackLayer)
         layer.addSublayer(progressLayer)
         addSubview(percentLabel)
@@ -510,15 +510,22 @@ final class ProgressRefreshHeader: RefreshComponent {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let center = CGPoint(x: bounds.midX, y: bounds.midY - 6)
         let radius: CGFloat = 14
-        let rect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-        let path = UIBezierPath(ovalIn: rect).cgPath
+        // Start at 12 o'clock so progress grows clockwise without rotating the layer.
+        // Setting `frame` after a non-identity `transform` leaves the layer position undefined.
+        let path = UIBezierPath(
+            arcCenter: center,
+            radius: radius,
+            startAngle: -.pi / 2,
+            endAngle: .pi * 1.5,
+            clockwise: true
+        ).cgPath
+        trackLayer.frame = bounds
         trackLayer.path = path
-        progressLayer.path = path
-        progressLayer.transform = CATransform3DMakeRotation(-.pi / 2, 0, 0, 1)
         progressLayer.frame = bounds
-        percentLabel.frame = CGRect(x: 0, y: center.y + 18, width: bounds.width, height: 16)
+        progressLayer.path = path
+        percentLabel.frame = CGRect(x: 0, y: center.y + radius + 4, width: bounds.width, height: 16)
         indicator.center = center
     }
 
@@ -530,7 +537,10 @@ final class ProgressRefreshHeader: RefreshComponent {
     }
 
     override func scrollProgressDidChange(_ progress: Float) {
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
         progressLayer.strokeEnd = CGFloat(progress)
+        CATransaction.commit()
         percentLabel.text = "\(Int(progress * 100))%"
     }
 }
