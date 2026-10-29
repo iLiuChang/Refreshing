@@ -10,4 +10,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.swift_version = "5.5"
   s.source_files = "Sources/*.{swift}"
+  s.resource_bundles = { 'Refreshing' => ['Sources/PrivacyInfo.xcprivacy'] }
 end
